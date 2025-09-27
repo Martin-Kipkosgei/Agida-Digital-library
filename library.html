@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>📚Agida Digital-library Hub🎓</title>
+  <style>
+    /* ==== RESET & BASE ==== */
+    * { margin:0; padding:0; box-sizing:border-box }
+    html { scroll-behavior:smooth }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #f0f4ff, #eaf6ff);
+      color: #333;
+      min-height: 100vh;
+    }
+    h2 { text-align: center; margin-bottom: 12px }
+    section {
+      padding: 20px 12px;
+      max-width: 1100px; margin: 12px auto;
+      background: #fff; border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    /* ==== HEADER & NAV ==== */
+    header {
+      position: sticky; top:0; left:0; right:0;
+      background: #004080;
+      display: flex; justify-content: space-between; align-items:center;
+      padding: 6px 12px; z-index: 100;
+      flex-wrap: wrap;
+    }
+    nav {
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    nav a {
+      color: #fff; text-decoration: none;
+      padding: 6px 10px; border-radius: 4px;
+      font-size: 0.9rem; transition: background .2s;
+    }
+    nav a:hover { background: #0059b3 }
+    .auth {
+      display: flex; gap: 6px; flex-wrap: wrap; align-items:center;
+    }
+    .auth input, .auth select {
+      font-size: 0.8rem; padding: 4px 6px;
+      border:none; border-radius:4px;
+    }
+    .auth button {
+      font-size: 0.8rem; padding:4px 8px;
+      border:none; border-radius:4px;
+      background:#00c6ff; color:#fff; cursor:pointer;
+      transition: background .2s;
+    }
+    .auth button:hover { background: #009fdc }
+
+    /* ==== BOOK GRID SHARED ==== */
+    .book-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+    }
+    .book {
+      background: #fff; border-radius:6px; overflow:hidden;
+      box-shadow:0 2px 6px rgba(0,0,0,0.1);
+      transition: transform .2s, box-shadow .2s;
+      text-align:center;
+      font-size: 0.9rem;
+    }
+    .book:hover {
+      transform: translateY(-4px);
+      box-shadow:0 4px 12px rgba(0,0,0,0.12);
+    }
+    .book img {
+      width:100%; height:180px; object-fit:cover;
+    }
+    .book-content { padding:6px }
+    .book-content h4 { margin:6px 0 4px; font-size:1rem }
+    .book-content p { margin:2px 0; color:#555; font-size:0.85rem }
+    .book-content button {
+      margin-top:4px; padding:4px 8px; font-size:0.85rem;
+      border:none; border-radius:4px; cursor:pointer;
+      background:#0077cc; color:#fff;
+      transition: background .2s;
+    }
+    .book-content button:hover { background:#005fa3 }
+
+    /* ==== FILTER BAR ==== */
+    .filters {
+      display:flex; gap:8px; flex-wrap: wrap;
+      justify-content:center; margin-bottom:12px;
+    }
+    .filters select, .filters button {
+      padding:6px 10px; font-size:0.9rem;
+      border:1px solid #ccc; border-radius:4px;
+    }
+    .filters button {
+      background:#0077cc; color:#fff; border:none;
+      cursor:pointer; transition: background .2s;
+    }
+    .filters button:hover { background:#005fa3 }
+
+    /* ==== FORMS ==== */
+    .form-inline {
+      display: flex; gap:8px; flex-wrap: wrap; justify-content:center;
+    }
+    .form-inline input, .form-inline select, .form-inline textarea {
+      padding:6px; font-size:0.9rem; border:1px solid #ccc; border-radius:4px;
+    }
+    .form-inline button {
+      padding:6px 12px; background:#00c6ff; color:#fff;
+      border:none; border-radius:4px; cursor:pointer;
+      transition: background .2s;
+    }
+    .form-inline button:hover { background:#009fdc }
+
+    /* ==== TABLES & LISTS ==== */
+    table { width:100%; border-collapse: collapse; margin-top:8px }
+    th, td { padding:6px; border:1px solid #ddd; text-align:left }
+    th { background:#f0f0f0 }
+
+    /* ==== RESPONSIVE ==== */
+    @media(max-width:600px) {
+      header { flex-direction:column; align-items:flex-start }
+      nav { width:100%; margin-bottom:6px }
+      .auth { width:100% }
+      .filters { flex-direction: column }
+    }
+    
+    /* ABOUT US STYLES */
+#about {
+  padding: 40px 20px;
+}
+#about h2 {
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 2rem;
+  color: #004080;
+}
+.about-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+}
+.about-home,
+.about-contact,
+.about-subscribe,
+.about-future {
+  background: #f9f9fb;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.about-home p {
+  margin: 12px 0;
+  line-height: 1.5;
+}
+.about-home blockquote {
+  font-style: italic;
+  color: #555;
+  margin-top: 12px;
+  border-left: 4px solid #0077cc;
+  padding-left: 12px;
+}
+.about-contact form,
+.about-subscribe form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.about-contact input,
+.about-contact textarea,
+.about-subscribe input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+.about-contact button,
+.about-subscribe button {
+  padding: 10px;
+  background: #0077cc;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.about-contact button:hover,
+.about-subscribe button:hover {
+  background: #005fa3;
+}
+.social-icons {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.social-icons a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #004080;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.social-icons a:hover {
+  color: #0077cc;
+}
+.about-subscribe p {
+  margin: 0 0 12px;
+  color: #555;
+}
+.about-future ul {
+  list-style: none;
+  padding-left: 0;
+}
+.about-future li {
+  margin: 8px 0;
+  line-height: 1.4;
+}
+.about-future strong {
+  color: #0077cc;
+}
+
+/* RESPONSIVE TWEAKS */
+@media (max-width: 600px) {
+  #about { padding: 24px 10px; }
+  .about-container { gap: 16px; }
+}
+  </style>
+</head>
+<body>
+
+  <header>
+    <h2 style='color:white;'>📚Agida Digital-library Hub📑</h2>
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#ebooks">EBooks</a>
+      <a href="#library">My Library</a>
+      <a href="#progress">My Progress</a>
+      <a href="#classes">My Classes</a>
+      <a href="#ai">AI Assistant</a>
+      <a href="#dictionary">Dictionary</a>
+      <a href="#admin">Admin</a>
+      <a href="#about">About</a>
+    </nav>
+    <div class="auth">
+      <input id="authName"    type="text"     placeholder="Name"/>
+      <input id="authEmail"   type="email"    placeholder="Email"/>
+      <input id="authPass"    type="password" placeholder="Password"/>
+      <select id="authRole">
+        <option value="">Role</option>
+        <option value="teacher">Teacher</option>
+        <option value="parent">Parent</option>
+        <option value="student">Student</option>
+        <option value="admin">Admin</option>
+      </select>
+      <button onclick="signUp()">Sign Up</button>
+      <button onclick="signIn()">Sign In</button>
+      <button onclick="signOut()">Sign Out</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- HOME -->
+    <section id="home">
+      <h2>Welcome to Your Digital Library!</h2>
+      <p style="text-align:center;color:#555">
+        Browse millions of titles across every subject and level—fully responsive, fully yours.
+      </p>
+    </section>
+
+    <!-- EBOOKS -->
+    <section id="ebooks">
+      <h2>EBooks &amp; Resources</h2>
+      <div class="filters">
+        <select id="categorySelect">
+          <option value="fiction">Fiction</option>
+          <option value="science">Science</option>
+          <option value="history">History</option>
+          <option value="art">Art</option>
+          <option value="technology">Technology</option>
+        </select>
+        <select id="levelSelect">
+          <option value="beginner">Beginner</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="advanced">Advanced</option>
+        </select>
+        <button onclick="resetAndLoad()">Load Books</button>
+      </div>
+      <p id="totalCount" style="text-align:center;color:#555"></p>
+      <div class="book-grid" id="bookGrid"></div>
+    </section>
+
+    <!-- MY LIBRARY -->
+    <section id="library">
+      <h2>My Library</h2>
+      <div id="myLibrary" class="book-grid"></div>
+    </section>
+
+    <!-- MY PROGRESS -->
+    <section id="progress">
+      <h2>My Progress</h2>
+      <table id="progressTable">
+        <thead><tr><th>Book</th><th>Progress</th><th>Update</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- MY CLASSES -->
+    <section id="classes">
+      <h2>My Classes</h2>
+      <div class="form-inline">
+        <input id="className" placeholder="Class Name"/>
+        <button onclick="createClass()">Create Class</button>
+        <input id="joinCode" placeholder="Join Code"/>
+        <button onclick="joinClass()">Join Class</button>
+      </div>
+      <table id="classTable">
+        <thead><tr><th>Code</th><th>Name</th><th>Teacher</th><th>Members</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- AI ASSISTANT -->
+    <section id="ai">
+      <h2>AI Assistant</h2>
+      <div class="form-inline">
+        <textarea id="aiInput" placeholder="Ask a question..." rows="2"></textarea>
+        <button onclick="askAI()">Send</button>
+      </div>
+      <p id="aiAnswer" style="margin-top:12px;color:#444"></p>
+    </section>
+
+    <!-- DICTIONARY -->
+    <section id="dictionary">
+      <h2>Dictionary</h2>
+      <div class="form-inline">
+        <input id="dictWord" placeholder="Enter word"/>
+        <button onclick="lookupDict()">Search</button>
+      </div>
+      <p id="dictResult" style="margin-top:12px;color:#444"></p>
+    </section>
+
+    <!-- ADMIN PANEL -->
+    <section id="admin">
+      <h2>Admin Panel</h2>
+      <table id="userTable">
+        <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Action</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <table id="classAdminTable" style="margin-top:16px">
+        <thead><tr><th>Code</th><th>Name</th><th>Teacher</th><th>Action</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- ABOUT US -->
+    <section id="about">
+  <h2>About Us</h2>
+  <div class="about-container">
+    <!-- 1. Hero + Testimonials -->
+    <div class="about-home">
+      <h3>Our Mission</h3>
+      <p>
+        We’re on a mission to unlock the world’s knowledge for every learner, 
+        teacher, and parent—wherever they are, however they learn.
+      </p>
+      <blockquote>
+        “This platform transformed our classroom.” – <strong>Teacher A</strong><br>
+        “My child reads daily now!” – <strong>Parent B</strong>
+      </blockquote>
+    </div>
+
+    <!-- 2. Contact Form + Socials -->
+    <div class="about-contact">
+      <h3>Get in Touch</h3>
+      <form id="aboutContactForm">
+        <input type="text" placeholder="Your Name" required>
+        <input type="email" placeholder="Your Email" required>
+        <textarea placeholder="Your Message" required></textarea>
+        <button type="submit">Send Message</button>
+      </form>
+      <div class="social-icons">
+        <a href="https://wa.me/0726570029"><i class="fab fa-whatsapp"></i> 0726570029 (Martin)</a>
+        <a href="https://wa.me/0797596360"><i class="fab fa-whatsapp"></i> 0797596360 (Daisy)</a>
+        <a href="mailto:kangogomartin023@gmail.com"><i class="fas fa-envelope"></i> kangogomartin023@gmail.com</a>
+        <a href="https://facebook.com/DigitalLibraryCo"><i class="fab fa-facebook"></i> Facebook</a>
+        <a href="#"><i class="fab fa-twitter"></i> Twitter</a>
+        <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
+        <a href="#"><i class="fab fa-x-twitter"></i> X</a>
+      </div>
+    </div>
+
+    <!-- 3. Newsletter Subscription -->
+    <div class="about-subscribe">
+      <h3>Stay Updated</h3>
+      <p>Subscribe for new releases, tips, and insider news.</p>
+      <form id="aboutSubscribeForm">
+        <input type="email" placeholder="Your Email" required>
+        <button type="submit">Subscribe</button>
+      </form>
+    </div>
+
+    <!-- 4. Future Vision -->
+    <div class="about-future">
+      <h3>The Future of Learning</h3>
+      <ul>
+        <li><strong>Where:</strong> Global classrooms, homes, on-the-go</li>
+        <li><strong>When:</strong> Right now—24/7 access</li>
+        <li><strong>How:</strong> AI-powered study guides, interactive eBooks, community reviews</li>
+        <li><strong>Why:</strong> Because equitable education transforms lives.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+    </section>
+  </main>
+  <footer></footer>
+
+  <script>
+  // ===== STORAGE HELPERS =====
+  const STORAGE = {
+    get(key){ return JSON.parse(localStorage.getItem(key)||'[]') },
+    set(key,val){ localStorage.setItem(key, JSON.stringify(val)) }
+  };
+
+  // ===== USER AUTH =====
+  let currentUser = null;
+  function signUp(){
+    const name = authName.value.trim();
+    const email = authEmail.value.trim();
+    const pass = authPass.value;
+    const role = authRole.value;
+    if(!name||!email||!pass||!role) return alert('Fill all fields');
+    const users = STORAGE.get('users');
+    if(users.find(u=>u.email===email)) return alert('Email exists');
+    users.push({name,email,pass,role,library:[],progress:{},classes:[]});
+    STORAGE.set('users',users);
+    alert(Registered ${name} as ${role});
+  }
+  function signIn(){
+    const email=authEmail.value.trim(), pass=authPass.value;
+    const users=STORAGE.get('users');
+    const user=users.find(u=>u.email===email&&u.pass===pass);
+    if(!user) return alert('Invalid credentials');
+    currentUser=user;
+    STORAGE.set('currentUser',user);
+    alert(Signed in as ${user.name} (${user.role}));
+    renderAll();
+  }
+  function signOut(){
+    if(!currentUser) return alert('Not signed in');
+    alert(Goodbye, ${currentUser.name});
+    currentUser=null; localStorage.removeItem('currentUser');
+    renderAll();
+  }
+  // On load: restore session
+  window.onload = ()=>{
+    const saved=JSON.parse(localStorage.getItem('currentUser'));
+    if(saved) { currentUser=saved; renderAll() }
+    resetAndLoad();
+  };
+
+  // ===== EBOOKS (with pagination) =====
+  let page=0,limit=20,total=0,loading=false;
+  async function fetchPage(){
+    if(loading) return; loading=true;
+    const cat=categorySelect.value, lvl=levelSelect.value;
+    const offset=page*limit;
+    try{
+      const res=await fetch(
+        https://openlibrary.org/subjects/${cat}.json?limit=${limit}&offset=${offset}
+      );
+      const data=await res.json();
+      total=data.work_count;
+      totalCount.innerText=${total.toLocaleString()} books found;
+      data.works.forEach(w=>{
+        const img=w.cover_id
+          ?https://covers.openlibrary.org/b/id/${w.cover_id}-M.jpg
+          :'https://via.placeholder.com/140x180?text=No+Cover';
+        const div=document.createElement('div');
+        div.className='book';
+        div.innerHTML=`
+          <img src="${img}"/>
+          <div class="book-content">
+            <h4>${w.title}</h4>
+            <p>${w.subject?.[0]||'General'}</p>
+            <p>Level: ${lvl.charAt(0).toUpperCase()+lvl.slice(1)}</p>
+            <button onclick="readBook('${w.key}')">Read</button>
+            <button onclick="borrowBook('${w.key}','${w.title}')">
+              Borrow/Review
+            </button>
+          </div>`;
+        bookGrid.appendChild(div);
+      });
+      page++;
+    }catch(e){ console.error(e); alert('Load error') }
+    finally{ loading=false }
+  }
+  function resetAndLoad(){
+    page=0; bookGrid.innerHTML=''; totalCount.innerText='';
+    fetchPage();
+  }
+  window.addEventListener('scroll',()=>{
+    if(window.innerHeight+window.scrollY>=document.body.offsetHeight-200){
+      if(page*limit < total) fetchPage();
+    }
+  });
+
+  function readBook(key){
+    if(!currentUser) return alert('Sign in to read');
+    window.open(https://openlibrary.org${key},'_blank');
+    // track progress stub: 10% read every open
+    updateProgress(key,10);
+  }
+
+  // ===== MY LIBRARY + REVIEWS =====
+  function borrowBook(key,title){
+    if(!currentUser) return alert('Sign in to borrow');
+    let users=STORAGE.get('users');
+    let u = users.find(x=>x.email===currentUser.email);
+    if(!u.library.includes(key)){
+      u.library.push(key);
+      STORAGE.set('users',users);
+      alert(Borrowed "${title}". It’s in My Library.);
+    }
+    renderMyLibrary();
+  }
+  function renderMyLibrary(){
+    const grid=document.getElementById('myLibrary');
+    grid.innerHTML='';
+    if(!currentUser) return;
+    const users=STORAGE.get('users');
+    const u=users.find(x=>x.email===currentUser.email);
+    u.library.forEach(key=>{
+      fetch(https://openlibrary.org${key}.json)
+        .then(r=>r.json())
+        .then(w=>{
+          const img=w.covers?.[0]
+            ?https://covers.openlibrary.org/b/id/${w.covers[0]}-M.jpg
+            :'https://via.placeholder.com/140x180?text=No+Cover';
+          const div=document.createElement('div');
+          div.className='book';
+          div.innerHTML=`
+            <img src="${img}"/><div class="book-content">
+              <h4>${w.title}</h4>
+              <button onclick="returnBook('${key}')">Return</button>
+              <button onclick="promptReview('${key}','${w.title}')">
+                Review
+              </button>
+            </div>`;
+          grid.appendChild(div);
+        });
+    });
+  }
+  function returnBook(key){
+    let users=STORAGE.get('users'), u=users.find(x=>x.email===currentUser.email);
+    u.library=u.library.filter(k=>k!==key);
+    STORAGE.set('users',users);
+    alert('Book returned');
+    renderMyLibrary(); renderProgress();
+  }
+  function promptReview(key,title){
+    const rating=prompt(Rate "${title}" (1–5):);
+    const comment=prompt('Comment:');
+    if(rating){
+      const reviews=STORAGE.get('reviews');
+      reviews.push({book:key,user:currentUser.email,rating: +rating,comment});
+      STORAGE.set('reviews',reviews);
+      alert('Review saved');
+    }
+  }
+
+  // ===== MY PROGRESS =====
+  function updateProgress(key,inc=0){
+    let users=STORAGE.get('users'), u=users.find(x=>x.email===currentUser.email);
+    u.progress[key]=(u.progress[key]||0)+inc;
+    if(u.progress[key]>100) u.progress[key]=100;
+    STORAGE.set('users',users);
+    renderProgress();
+  }
+  function renderProgress(){
+    const tbody=document.querySelector('#progressTable tbody');
+    tbody.innerHTML='';
+    if(!currentUser) return;
+    const users=STORAGE.get('users'), u=users.find(x=>x.email===currentUser.email);
+    for(const key in u.progress){
+      fetch(https://openlibrary.org${key}.json)
+        .then(r=>r.json())
+        .then(w=>{
+          const tr=document.createElement('tr');
+          tr.innerHTML=`
+            <td>${w.title}</td>
+            <td>${u.progress[key]}%</td>
+            <td>
+              <button onclick="updateProgress('${key}',10)">
+                +10%
+              </button>
+            </td>`;
+          tbody.appendChild(tr);
+        });
+    }
+  }
+
+  // ===== MY CLASSES =====
+  function createClass(){
+    if(!currentUser||currentUser.role!=='teacher') return alert('Teacher only');
+    const name=className.value.trim();
+    if(!name) return alert('Enter class name');
+    const classes=STORAGE.get('classes');
+    const code=Math.random().toString(36).slice(2,8).toUpperCase();
+    classes.push({code,name,teacher:currentUser.email,students:[]});
+    STORAGE.set('classes',classes);
+    renderClasses(); renderAdmin();
+  }
+  function joinClass(){
+    if(!currentUser) return alert('Sign in first');
+    const code=joinCode.value.trim().toUpperCase();
+    const classes=STORAGE.get('classes');
+    const c=classes.find(x=>x.code===code);
+    if(!c) return alert('Invalid code');
+    if(!c.students.includes(currentUser.email)){
+      c.students.push(currentUser.email);
+      STORAGE.set('classes',classes);
+      alert('Joined class');
+    }
+    renderClasses();
+  }
+  function renderClasses(){
+    const tbody=document.querySelector('#classTable tbody');
+    tbody.innerHTML='';
+    const classes=STORAGE.get('classes');
+    classes.forEach(c=>{
+      const mem=c.students.length;
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${c.code}</td>
+        <td>${c.name}</td>
+        <td>${c.teacher}</td>
+        <td>${mem}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // ===== AI ASSISTANT (mock) =====
+  function askAI(){
+    const q=aiInput.value.trim();
+    if(!q) return;
+    aiAnswer.innerText='Thinking…';
+    setTimeout(()=>{
+      aiAnswer.innerText = AI: "${q}" is an excellent question! Keep exploring.;
+    },600);
+  }
+
+  // ===== DICTIONARY =====
+  async function lookupDict(){
+    const w=dictWord.value.trim();
+    if(!w) return;
+    try {
+      const res=await fetch(
+        https://api.dictionaryapi.dev/api/v2/entries/en/${w}
+      );
+      const d=await res.json();
+      dictResult.innerText = d[0]?.meanings[0]?.definitions[0]?.definition 
+        || 'No definition found';
+    } catch {
+      dictResult.innerText='Lookup error';
+    }
+  }
+
+  // ===== ADMIN PANEL =====
+  function renderAdmin(){
+    const uT=document.querySelector('#userTable tbody');
+    const cT=document.querySelector('#classAdminTable tbody');
+    uT.innerHTML=''; cT.innerHTML='';
+    const users=STORAGE.get('users'), classes=STORAGE.get('classes');
+    users.forEach(u=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`
+        <td>${u.name}</td><td>${u.email}</td><td>${u.role}</td>
+        <td><button onclick="removeUser('${u.email}')">Remove</button></td>`;
+      uT.appendChild(tr);
+    });
+    classes.forEach(c=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`
+        <td>${c.code}</td><td>${c.name}</td>
+        <td>${c.teacher}</td>
+        <td><button onclick="removeClass('${c.code}')">
+          Remove
+        </button></td>`;
+      cT.appendChild(tr);
+    });
+  }
+  function removeUser(email){
+    let users=STORAGE.get('users');
+    STORAGE.set('users', users.filter(u=>u.email!==email));
+    renderAdmin(); alert('User removed');
+  }
+  function removeClass(code){
+    let classes=STORAGE.get('classes');
+    STORAGE.set('classes', classes.filter(c=>c.code!==code));
+    renderAdmin(); alert('Class removed');
+  }
+
+  // ===== INIT STORAGE KEYS =====
+  if(!localStorage.getItem('users')) STORAGE.set('users',[]);
+  if(!localStorage.getItem('classes')) STORAGE.set('classes',[]);
+  if(!localStorage.getItem('reviews')) STORAGE.set('reviews',[]);
+
+  function renderAll(){
+    renderMyLibrary();
+    renderProgress();
+    renderClasses();
+    renderAdmin();
+  }
+  // 1. Initialize Stripe Elements
+const stripe = Stripe('pk_test_YOUR_PUBLISHABLE_KEY'); // replace
+const elements = stripe.elements();
+const cardElement = elements.create('card', {
+  style: {
+    base: { fontSize: '16px', color: '#424770' },
+    invalid: { color: '#fa755a' }
+  }
+});
+cardElement.mount('#card-element');
+
+// 2. Open modal on Premium click
+let premiumBook = null;
+function payPremium(bookKey, bookTitle) {
+  if (!currentUser) return alert('Sign in to purchase.');
+  premiumBook = { key: bookKey, title: bookTitle };
+  document.getElementById('modalBookTitle').innerText =
+    Unlock “${bookTitle}” for $2.99;
+  document.getElementById('paymentModal').style.display = 'block';
+}
+
+// 3. Close modal
+function closePaymentModal() {
+  document.getElementById('paymentModal').style.display = 'none';
+  document.getElementById('card-error').innerText = '';
+  document.getElementById('card-success').innerText = '';
+}
+
+// 4. Handle payment
+document.getElementById('payBtn').addEventListener('click', async () => {
+  document.getElementById('payBtn').disabled = true;
+  // 4.1 Create PaymentIntent on your backend
+  const { clientSecret, error: ciError } = await fetch(
+    'http://localhost:4242/create-payment-intent',
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount: 299 }) // $2.99 in cents
+    }
+  ).then(r => r.json());
+
+  if (ciError) {
+    document.getElementById('card-error').innerText = ciError;
+    document.getElementById('payBtn').disabled = false;
+    return;
+  }
+
+  // 4.2 Confirm card payment
+  const { paymentIntent, error } = await stripe.confirmCardPayment(
+    clientSecret, {
+      payment_method: { card: cardElement }
+    }
+  );
+
+  if (error) {
+    document.getElementById('card-error').innerText = error.message;
+    document.getElementById('payBtn').disabled = false;
+  } else if (paymentIntent.status === 'succeeded') {
+    document.getElementById('card-success').innerText = 'Payment successful!';
+    unlockPremiumBook(premiumBook.key, premiumBook.title);
+    setTimeout(closePaymentModal, 1200);
+  }
+});
+
+// 5. Close modal if clicking outside
+window.addEventListener('click', e => {
+  if (e.target.id === 'paymentModal') closePaymentModal();
+});
+  </script>
+</body>
+</html>
